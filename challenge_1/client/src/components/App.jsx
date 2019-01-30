@@ -49,15 +49,13 @@ export default class App extends React.Component {
 
   changePage() {
     let data = this.state.events.slice(this.state.offset, this.state.offset + 10);
-    console.log(data);
     this.setState({ data });
   }
 
   handlePageClick(data) {
     let selected = data.selected;
     let offset = Math.ceil(selected * 10);
-    console.log(selected);
-    this.setState({ offset: offset }, this.changePage());
+    this.setState({ offset: offset }, this.changePage);
   };
 
   render() {
@@ -102,14 +100,20 @@ export default class App extends React.Component {
           previousLabel={'previous'}
           nextLabel={'next'}
           breakLabel={'...'}
-          breakClassName={'break-me'}
+          breakClassName={'page-item disabled'}
           pageCount={this.state.pageCount}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
           onPageChange={this.handlePageClick}
           containerClassName={'pagination'}
           subContainerClassName={'pages pagination'}
-          activeClassName={'active'}
+          activeClassName={'page-item active'}
+          pageLinkClassName={'page-link'}
+          pageClassName={'page-item'}
+          nextClassName={'page-item'}
+          previousClassName={'page-item'}
+          nextLinkClassName={'page-link'}
+          previousLinkClassName={'page-link'}
         />
       </div>
     )
