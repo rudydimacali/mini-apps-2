@@ -11,28 +11,32 @@ export default class App extends React.Component {
         date: 'Loading...',
         description: '',
       }],
-      data: [],
-      offset: 0,
-      pageCount: 1
+      pageCount: 1,
+      pageNum: 1,
+      queue: 'September'
     };
     this.getResults = this.getResults.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handlePageClick = this.handlePageClick.bind(this);
-    this.changePage = this.changePage.bind(this);
   }
 
   componentDidMount() {
-    this.getResults('September');
+    this.getResults();
   }
 
-  getResults(queue) {
-    axios.get(`http://localhost:3000/events?q=${queue}`)
+  getResults() {
+    axios.get(`http://localhost:3000/events`, {
+      params: {
+        q: this.state.queue,
+        _page: this.state.pageNum
+      }
+    })
       .then((response) => {
         this.setState({
           events: response.data,
-          pageCount: response.data.length / 10
-        }, this.changePage);
+          pageCount: Math.ceil(response.headers['x-total-count'] / 10),
+        });
       });
   }
 
@@ -44,18 +48,16 @@ export default class App extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.getResults(this.state.query);
-  }
-
-  changePage() {
-    let data = this.state.events.slice(this.state.offset, this.state.offset + 10);
-    this.setState({ data });
+    this.setState({
+      pageNum: 1
+    }, this.getResults)
   }
 
   handlePageClick(data) {
-    let selected = data.selected;
-    let offset = Math.ceil(selected * 10);
-    this.setState({ offset: offset }, this.changePage);
+    let selected = data.selected + 1;
+    this.setState({
+      pageNum: selected
+    }, this.getResults);
   };
 
   render() {
@@ -93,7 +95,7 @@ export default class App extends React.Component {
               <th>Date</th>
               <th>Description</th>
             </tr>
-            <SearchResults results={this.state.data} />
+            <SearchResults results={this.state.events} />
           </tbody>
         </table>
         <ReactPaginate
