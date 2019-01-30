@@ -11,10 +11,17 @@ export default class App extends React.Component {
         description: '',
       }],
     };
+    this.getResults = this.getResults.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
-    axios.get('http://localhost:3000/events?q=September')
+    this.getResults('September');
+  }
+
+  getResults(queue) {
+    axios.get(`http://localhost:3000/events?q=${queue}`)
       .then((response) => {
         this.setState({
           events: response.data
@@ -22,9 +29,24 @@ export default class App extends React.Component {
       });
   }
 
+  handleChange(e) {
+    this.setState({
+      [e.target.id]: e.target.value
+    });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.getResults(this.state.query);
+  }
+
   render() {
     return (
       <div>
+        <form>
+          <input id='query' onChange={this.handleChange}></input>
+          <button id='submit' onClick={this.handleSubmit}>Search</button>
+        </form>
         <table>
           <tbody>
             <tr>
