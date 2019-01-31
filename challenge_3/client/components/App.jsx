@@ -16,13 +16,12 @@ export default class App extends React.Component {
     this.resetField = this.resetField.bind(this);
     this.throwBall = this.throwBall.bind(this);
     this.nextFrame = this.nextFrame.bind(this);
+    this.newGame = this.newGame.bind(this);
+    this.addBonusPoints = this.addBonusPoints.bind(this);
   }
 
   generateNextTurn() {
-    const
-      {
-        score, selectedPins, totalScore, activeBonuses, turn, frame,
-      } = this.state;
+    const { score, selectedPins, totalScore, turn, frame } = this.state;
     // First, set score for current frame to the current score plus last throw
     this.setState({
       score: score + selectedPins,
@@ -63,31 +62,51 @@ export default class App extends React.Component {
             this.nextFrame();
           }
           break;
-        // Testing for all cases
         default:
+          break;
       }
-      // Create copy of active bonuses to modify
-      const newActiveBonuses = activeBonuses.slice();
-      if (newActiveBonuses.length) {
-        // If there are active bonuses, add to total score the current throw for each
-        newActiveBonuses.forEach((activeBonus, index) => {
-          if (activeBonus > 0) {
-            this.setState({
-              totalScore: totalScore + selectedPins,
-            }, () => {
-              newActiveBonuses[index] -= 1;
-            });
-          }
-          // If current bonus has been dropped to 0, remove the bonus
-          if (activeBonus === 0) {
-            newActiveBonuses.splice(index, 1);
-          }
-        });
-      }
-      // If the previous throw was a strike or spare, add the resulting bonus to active bonuses.
-      if (bonusToAdd && frame < 11) {
-        newActiveBonuses.push(bonusToAdd);
-      }
+      this.addBonusPoints(bonusToAdd);
+    });
+  }
+
+  addBonusPoints(bonusToAdd) {
+    const { activeBonuses, totalScore, selectedPins, frame } = this.state;
+    // Create copy of active bonuses to modify
+    const newActiveBonuses = activeBonuses.slice();
+    if (newActiveBonuses.length) {
+      // If there are active bonuses, add to total score the current throw for each
+      newActiveBonuses.forEach((activeBonus, index) => {
+        if (activeBonus > 0) {
+          this.setState({
+            totalScore: totalScore + selectedPins,
+          }, () => {
+            newActiveBonuses[index] -= 1;
+          });
+        }
+        // If current bonus has been dropped to 0, remove the bonus
+        if (activeBonus === 0) {
+          newActiveBonuses.splice(index, 1);
+        }
+      });
+    }
+    // If the previous throw was a strike or spare, add the resulting bonus to active bonuses.
+    if (bonusToAdd && frame < 11) {
+      newActiveBonuses.push(bonusToAdd);
+    }
+    if (frame > 10 && !newActiveBonuses.length) {
+      this.newGame();
+    }
+  }
+
+  newGame() {
+    this.setState({
+      selectedPins: 0,
+      turn: 0,
+      frame: 1,
+      score: 0,
+      totalScore: 0,
+      pins: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      activeBonuses: [],
     });
   }
 
