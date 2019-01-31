@@ -55,9 +55,9 @@ export default class Chart extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let testDate = moment(this.state.startDate, 'YYYY-MM-DD');
-    if (!testDate.isValid() || testDate.isBefore(moment('2009-12-31')) || testDate.isAfter(moment())) {
-      alert(`Please enter a valid date between 2010-01-01 and ${moment().format('YYYY-MM-DD')} in the format YYYY-MM-DD.`);
+    let testDate = moment(this.state.startDate);
+    if (!testDate.isValid() || testDate.isBefore(moment('2010-07-17')) || testDate.isAfter(moment())) {
+      alert(`Please enter a valid date between 2010-07-17 and ${moment().format('YYYY-MM-DD')} in the format YYYY-MM-DD.`);
     } else {
       this.getBpi(this.state.startDate);
     }
