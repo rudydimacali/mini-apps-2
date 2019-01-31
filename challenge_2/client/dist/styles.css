@@ -12,7 +12,8 @@ h3 {
 
 input, button {
   display: inline !important;
-  margin-right: 15px !important;
+  margin-right: 7.5px !important;
+  margin-left: 7.5px !important;
   max-width: 30%;
 }
 
