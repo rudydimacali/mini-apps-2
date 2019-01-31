@@ -15,6 +15,7 @@ export default class App extends React.Component {
     };
     this.generateNextTurn = this.generateNextTurn.bind(this);
     this.resetField = this.resetField.bind(this);
+    this.throwBall = this.throwBall.bind(this);
   }
 
   generateNextTurn() {
@@ -72,8 +73,10 @@ export default class App extends React.Component {
           break;
         // Testing for all cases
         default:
-          let newActiveBonuses = activeBonuses.slice();
-          if (newActiveBonuses.length) {
+          // Create copy of active bonuses to modify
+          const newActiveBonuses = activeBonuses.slice();
+          if (activeBonuses.length) {
+            // If there are active bonuses, add to total score the current throw for each
             newActiveBonuses.forEach((activeBonus, index) => {
               if (activeBonus > 0) {
                 this.setState({
@@ -82,11 +85,13 @@ export default class App extends React.Component {
                   newActiveBonuses[index] -= 1;
                 });
               }
+              // If current bonus has been dropped to 0, remove the bonus
               if (activeBonus === 0) {
                 newActiveBonuses.splice(index, 1);
               }
             });
           }
+          // If the previous throw was a strike or spare, add the resulting bonus to active bonuses.
           if (bonusToAdd && frame < 11) {
             newActiveBonuses.push(bonusToAdd);
           }
@@ -98,6 +103,27 @@ export default class App extends React.Component {
     this.setState({
       pins: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     });
+  }
+
+  handleChange(e) {
+    this.setState({
+      [e.target.id]: e.target.value,
+    });
+  }
+
+  throwBall(e) {
+    const { pins, selectedPins } = this.state;
+    const pinIndices = [];
+    e.preventDefault();
+    // get indices of standing pins
+    pins.forEach((pin, index) => {
+      if (pin === 1) { pinIndices.push(index); }
+    });
+    // knock down random pins according to number of selected pins
+    for (let i = 0; i < selectedPins; i++) {
+      pins[pinIndices[Math.random() * pinIndices.length]] = 0;
+    }
+    this.generateNextTurn();
   }
 
   render() {
