@@ -1,0 +1,8 @@
+tr, th, td {
+  word-wrap: break-word;
+  max-width: 50px;
+}
+
+.pagination {
+  justify-content: center;
+}
