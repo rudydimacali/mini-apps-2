@@ -7,7 +7,6 @@ export default class App extends React.Component {
       selectedPins: 0,
       turn: 0,
       frame: 1,
-      bonus: 0,
       score: 0,
       totalScore: 0,
       pins: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -73,30 +72,30 @@ export default class App extends React.Component {
           break;
         // Testing for all cases
         default:
-          // Create copy of active bonuses to modify
-          const newActiveBonuses = activeBonuses.slice();
-          if (activeBonuses.length) {
-            // If there are active bonuses, add to total score the current throw for each
-            newActiveBonuses.forEach((activeBonus, index) => {
-              if (activeBonus > 0) {
-                this.setState({
-                  totalScore: totalScore + selectedPins,
-                }, () => {
-                  newActiveBonuses[index] -= 1;
-                });
-              }
-              // If current bonus has been dropped to 0, remove the bonus
-              if (activeBonus === 0) {
-                newActiveBonuses.splice(index, 1);
-              }
+      }
+      // Create copy of active bonuses to modify
+      const newActiveBonuses = activeBonuses.slice();
+      if (newActiveBonuses.length) {
+        // If there are active bonuses, add to total score the current throw for each
+        newActiveBonuses.forEach((activeBonus, index) => {
+          if (activeBonus > 0) {
+            this.setState({
+              totalScore: totalScore + selectedPins,
+            }, () => {
+              newActiveBonuses[index] -= 1;
             });
           }
-          // If the previous throw was a strike or spare, add the resulting bonus to active bonuses.
-          if (bonusToAdd && frame < 11) {
-            newActiveBonuses.push(bonusToAdd);
+          // If current bonus has been dropped to 0, remove the bonus
+          if (activeBonus === 0) {
+            newActiveBonuses.splice(index, 1);
           }
+        });
       }
-    })
+      // If the previous throw was a strike or spare, add the resulting bonus to active bonuses.
+      if (bonusToAdd && frame < 11) {
+        newActiveBonuses.push(bonusToAdd);
+      }
+    });
   }
 
   resetField() {
@@ -120,7 +119,7 @@ export default class App extends React.Component {
       if (pin === 1) { pinIndices.push(index); }
     });
     // knock down random pins according to number of selected pins
-    for (let i = 0; i < selectedPins; i++) {
+    for (let i = 0; i < selectedPins; i += 1) {
       pins[pinIndices[Math.random() * pinIndices.length]] = 0;
     }
     this.generateNextTurn();
