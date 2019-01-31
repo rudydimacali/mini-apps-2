@@ -7,13 +7,18 @@ export default class App extends React.Component {
     this.state = {
 
     };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.setState({
+      [e.target.id]: e.target.value
+    });
   }
 
   render() {
     return (
-      <div>
-        <Chart />
-      </div>
+      <Chart />
     )
   }
 }
