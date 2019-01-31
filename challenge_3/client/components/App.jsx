@@ -15,6 +15,7 @@ export default class App extends React.Component {
     this.generateNextTurn = this.generateNextTurn.bind(this);
     this.resetField = this.resetField.bind(this);
     this.throwBall = this.throwBall.bind(this);
+    this.nextFrame = this.nextFrame.bind(this);
   }
 
   generateNextTurn() {
@@ -40,10 +41,12 @@ export default class App extends React.Component {
               totalScore: totalScore + 10,
               frame: frame + 1,
               turn: turn + 1,
+              pins: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             });
           } else {
             this.setState({
               turn: turn + 1,
+              pins: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             });
           }
           break;
@@ -54,20 +57,10 @@ export default class App extends React.Component {
             bonusToAdd = 1;
             this.resetField();
             // Go to next frame, and increase total score by 10. Set score for next frame to 0.
-            this.setState({
-              score: 0,
-              totalScore: totalScore + 10,
-              frame: frame + 1,
-              turn: 0,
-            });
+            this.nextFrame();
             // Otherwise, just add score for current frame to total score and go to next frame.
           } else {
-            this.setState({
-              totalScore: totalScore + score,
-              score: 0,
-              frame: frame + 1,
-              turn: 0,
-            });
+            this.nextFrame();
           }
           break;
         // Testing for all cases
@@ -98,8 +91,13 @@ export default class App extends React.Component {
     });
   }
 
-  resetField() {
+  nextFrame() {
+    const { frame, totalScore } = this.state;
     this.setState({
+      totalScore: totalScore + 10,
+      score: 0,
+      frame: frame + 1,
+      turn: 0,
       pins: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     });
   }
