@@ -1,4 +1,5 @@
 import React from 'react';
+import Keypad from './Keypad';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -13,11 +14,11 @@ export default class App extends React.Component {
       activeBonuses: [],
     };
     this.generateNextTurn = this.generateNextTurn.bind(this);
-    this.resetField = this.resetField.bind(this);
     this.throwBall = this.throwBall.bind(this);
     this.nextFrame = this.nextFrame.bind(this);
     this.newGame = this.newGame.bind(this);
     this.addBonusPoints = this.addBonusPoints.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   generateNextTurn() {
@@ -33,7 +34,6 @@ export default class App extends React.Component {
           // If strike
           if (score === 10) {
             bonusToAdd = 2;
-            this.resetField();
             // Go to next frame, and increase total score by 10. Set score for next frame to 0.
             this.setState({
               score: 0,
@@ -54,7 +54,6 @@ export default class App extends React.Component {
           // If spare
           if (score === 10) {
             bonusToAdd = 1;
-            this.resetField();
             // Go to next frame, and increase total score by 10. Set score for next frame to 0.
             this.nextFrame();
             // Otherwise, just add score for current frame to total score and go to next frame.
@@ -121,30 +120,33 @@ export default class App extends React.Component {
     });
   }
 
-  handleChange(e) {
+  handleClick(e) {
     this.setState({
-      [e.target.id]: e.target.value,
-    });
+      [e.target.className]: e.target.value,
+    }, this.throwBall);
   }
 
-  throwBall(e) {
+  throwBall() {
     const { pins, selectedPins } = this.state;
     const pinIndices = [];
-    e.preventDefault();
     // get indices of standing pins
     pins.forEach((pin, index) => {
       if (pin === 1) { pinIndices.push(index); }
     });
     // knock down random pins according to number of selected pins
     for (let i = 0; i < selectedPins; i += 1) {
-      pins[pinIndices[Math.random() * pinIndices.length]] = 0;
+      const pinIndex = Math.floor(Math.random() * pinIndices.length);
+      pins[pinIndices[pinIndex]] = 0;
+      pinIndices.splice(pinIndex, 1);
     }
-    this.generateNextTurn();
+    this.setState({ pins }, this.generateNextTurn);
   }
 
   render() {
     return (
-      <div>Hello World!</div>
+      <div>
+        <Keypad handleClick={this.handleClick} />
+      </div>
     );
   }
 }
