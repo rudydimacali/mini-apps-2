@@ -16,18 +16,20 @@ const Keypad = ({ handleClick }) => {
   };
   return (
     <table>
-      <tr>
-        {generateRow([1, 2, 3])}
-      </tr>
-      <tr>
-        {generateRow([4, 5, 6])}
-      </tr>
-      <tr>
-        {generateRow([7, 8, 9])}
-      </tr>
-      <tr>
-        {generateRow([10, 0])}
-      </tr>
+      <tbody>
+        <tr>
+          {generateRow([1, 2, 3])}
+        </tr>
+        <tr>
+          {generateRow([4, 5, 6])}
+        </tr>
+        <tr>
+          {generateRow([7, 8, 9])}
+        </tr>
+        <tr>
+          {generateRow([10, 0])}
+        </tr>
+      </tbody>
     </table>
   );
 };

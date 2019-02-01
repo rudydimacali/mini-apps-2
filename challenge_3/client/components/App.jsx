@@ -1,5 +1,7 @@
 import React from 'react';
 import Keypad from './Keypad';
+import Pins from './Pins';
+import ScoreRender from './ScoreRender';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -138,6 +140,8 @@ export default class App extends React.Component {
     return (
       <div>
         <Keypad handleClick={this.handleClick} />
+        <Pins pins={this.state.pins} />
+        <ScoreRender frame={this.state.frame} score={this.state.score} totalScore={this.state.totalScore} />
       </div>
     );
   }
