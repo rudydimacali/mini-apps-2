@@ -38,15 +38,14 @@ export default class App extends React.Component {
         } else {
           this.setState({
             turn: turn + 1,
-            pins: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
           }, () => { this.addBonusPoints(0); });
         }
         // If second turn in frame
       } else if (turn === 1) {
         // If spare
-        if (this.state.score === 10) {
+        if (this.state.score >= 10) {
           // Go to next frame, and increase total score by 10. Set score for next frame to 0.
-          this.nextFrame(1);
+          this.setState({ score: 10 }, () => { this.nextFrame(1); });
           // Otherwise, just add score for current frame to total score and go to next frame.
         } else {
           this.nextFrame(0);
@@ -74,14 +73,15 @@ export default class App extends React.Component {
     const newActiveBonuses = activeBonuses.slice();
     if (newActiveBonuses.length) {
       // If there are active bonuses, add to total score the current throw for each
+      let newTotal = this.state.totalScore;
       newActiveBonuses.forEach((activeBonus, index) => {
         if (activeBonus > 0) {
-          console.log('adding 10 to ', this.state.totalScore);
+          newTotal += selectedPins;
+          newActiveBonuses[index] -= 1;
+        };
+        if (index + 1 === newActiveBonuses.length) {
           this.setState({
-            totalScore: this.state.totalScore + selectedPins,
-          }, () => {
-            newActiveBonuses[index] -= 1;
-            console.log(`Total score now at ${this.state.totalScore}`);
+            totalScore: newTotal,
           });
         }
       });
@@ -93,7 +93,7 @@ export default class App extends React.Component {
     this.setState({
       activeBonuses: newActiveBonuses,
     }, () => {
-      if (frame > 10 && !newActiveBonuses.includes(0)) {
+      if (frame > 10 && !newActiveBonuses.includes(1) && !newActiveBonuses.includes(2)) {
         this.newGame();
       }
     });
